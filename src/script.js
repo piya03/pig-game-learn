@@ -3,6 +3,7 @@ let pickfinal_score_1 = document.querySelector(".final_score-1");
 let pickfinal_score_2 = document.querySelector(".final_score-2");
 let pickcurrent_score_1 = document.querySelector(".current-score-1");
 let pickcurrent_score_2 = document.querySelector(".current-score-2");
+
 let pickHold = document.querySelector(".hold");
 let pick_allDice = document.querySelector(".all-dice");
 let ResetGame = document.querySelector(".new-game");
@@ -15,7 +16,7 @@ let roundScore, currentPlayer, finalScore, gamePlaying;
 roundScore = 0;
 currentPlayer = 1;
 finalScore = [0, 0, 0];
-
+let lastDice;
 console.log(gamePlaying, "gamePlayinggamePlaying");
 
 ///////////////////////////
@@ -25,7 +26,6 @@ pickRoll_dice.addEventListener("click", funRollDice);
 function funRollDice() {
   if (gamePlaying) {
     let saveRandomNo = Math.floor(Math.random() * 6) + 1;
-
     let pickDice = document.querySelector(`.dice${saveRandomNo}`);
     let notPick = pick_allDice.querySelectorAll(
       `div:not(.dice${saveRandomNo})`
@@ -40,7 +40,17 @@ function funRollDice() {
       });
       // pickDice.style.display = "none";
     }
-    if (saveRandomNo !== 1) {
+    //if roll dice comes two times 6 round score and totalscore = 0
+    if (saveRandomNo === 6 && lastDice === 6) {
+      document.querySelector(
+        //player looses score
+        ".current-score-" + currentPlayer
+      ).textContent = 0;
+      finalScore[currentPlayer] = 0;
+
+      document.querySelector(".final_score-" + currentPlayer).textContent = 0;
+      nextPlayer();
+    } else if (saveRandomNo !== 1) {
       //add score
       roundScore += saveRandomNo;
       console.log(roundScore, "roundScoreroundScore");
@@ -51,19 +61,31 @@ function funRollDice() {
       //next player
       nextPlayer();
     }
+    lastDice = saveRandomNo;
+    console.log(lastDice, "lastDicelastDice");
   }
 }
 ///hold btn
 pickHold.addEventListener("click", funHold_And_AddTo_Final);
 
 function funHold_And_AddTo_Final() {
-  if(gamePlaying) {
+  if (gamePlaying) {
     finalScore[currentPlayer] += roundScore;
     document.querySelector(".final_score-" + currentPlayer).textContent =
       finalScore[currentPlayer];
     console.log(finalScore, "finalScorefinalScorefinalScore");
     //check if player won the game
-    if (finalScore[currentPlayer] >= 20) {
+    //input value
+    let pickInputType = document.querySelector("#inputType").value;
+
+    let winningScore;
+    if (pickInputType) {
+      winningScore = pickInputType;
+    } else {
+      winningScore = 20;
+    }
+    console.log(pickInputType, "pickInputTypepickInputType");
+    if (finalScore[currentPlayer] >= winningScore) {
       let Winner = document.querySelector(".player-" + currentPlayer);
 
       Winner.textContent = "WINNER!";
@@ -74,7 +96,7 @@ function funHold_And_AddTo_Final() {
         .querySelector(".redCircle_" + currentPlayer)
         .classList.remove("active");
       gamePlaying = false;
-      console.log(gamePlaying,'gamePlayingfalse')
+      console.log(gamePlaying, "gamePlayingfalse");
     } else {
       nextPlayer();
     }
@@ -111,13 +133,13 @@ function init() {
   let Winner2 = document.querySelector(".player-2");
   Winner2.textContent = "PLAYER 2";
   console.log("Winner2", Winner2);
-        Winner1.style.color = "";
-      Winner1.style.fontSize = "20px";
-          Winner2.style.color = "";
-      Winner2.style.fontSize = "20px";
-   document.querySelector(".redCircle_1").classList.add("active");
+  Winner1.style.color = "";
+  Winner1.style.fontSize = "20px";
+  Winner2.style.color = "";
+  Winner2.style.fontSize = "20px";
+  document.querySelector(".redCircle_1").classList.add("active");
   document.querySelector(".redCircle_2").classList.remove("active");
-  
+
   document.querySelector(".player1").classList.add("activePlayer");
   document.querySelector(".player2").classList.remove("activePlayer");
 }

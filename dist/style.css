@@ -172,3 +172,13 @@
     align-items: center;
     line-height: 1.5;
 }
+
+#inputType{
+      margin: auto;
+    display: flex;
+    padding: 10px;
+    margin-bottom: 14px;
+}
+.no_Text{
+  text-align: center;
+}
